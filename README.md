@@ -27,6 +27,7 @@ This Rust program analyzes the file sizes within one or more specified folders, 
    ```bash
    cargo build --release
    ```
+This will generate a binary file in the `target/release` directory.
 
 ## Usage
 
@@ -40,8 +41,6 @@ cargo run -- <folder_path1> [<folder_path2> ...] [year]
 - **year** (optional): A specific year to analyze monthly file sizes within that year.
 
 
-
-This will generate a binary file in the `target/release` directory.
 
 ## Running the Binary
 
