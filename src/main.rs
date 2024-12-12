@@ -69,6 +69,7 @@ fn main() {
 
 fn calculate_file_sizes(folder_path: &str, year: Option<i32>) -> Result<HashMap<i32, u64>, Box<dyn std::error::Error>> {
     let size_by_times = Mutex::new(HashMap::new());
+    let working_year = year.unwrap_or(0); //Default value is 0
 
     WalkDir::new(folder_path)
         .into_iter()
@@ -83,13 +84,20 @@ fn calculate_file_sizes(folder_path: &str, year: Option<i32>) -> Result<HashMap<
                     
                     let datetime: DateTime<Utc> = modified.into();
                     let m_year: i32 = datetime.year();
-                    let mut key: i32 = m_year;
-                    if Some(m_year) == year {
-                        key = datetime.month() as i32;
+                    let mut key: i32 = 0;
+                    if working_year > 0{
+                        if m_year == working_year {
+                            key =  datetime.month() as i32;
+                        }
+                    }else{
+                        key = m_year;
                     }
-                    // Accumulate sizes by month in a thread-safe way
-                    let mut size_by_times = size_by_times.lock().unwrap();
-                    *size_by_times.entry(key).or_insert(0) += size;
+                    if key > 0{
+                        // Accumulate sizes by month in a thread-safe way
+                        let mut size_by_times = size_by_times.lock().unwrap();
+                        *size_by_times.entry(key).or_insert(0) += size;
+                    }
+
                 }
             }
         });
